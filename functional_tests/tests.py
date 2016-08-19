@@ -1,7 +1,6 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import unittest
 
 class NewVisitorTest(LiveServerTestCase):
 
@@ -39,8 +38,9 @@ class NewVisitorTest(LiveServerTestCase):
             # When they hit enter the page updates, and now lists
             # "1: Buy peacock feathers" as an item of the to-do list
             inputbox.send_keys(Keys.ENTER)
-
-            rows = self.browser.find_elements_by_tag_name('tr')
+            edith_list_url = self.browser.current_url
+            self.assertRegex(edith_list_url, '/lists/.+')
+            self.check_for_row_in_list_table('1: Buy peacock feathers')
 
             # There is another text box inviting them to add another item.
             # They enter "Use peacock feathers to make a fly" (they're very methodical)
@@ -52,13 +52,34 @@ class NewVisitorTest(LiveServerTestCase):
             self.check_for_row_in_list_table('1: Buy peacock feathers')
             self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
 
-            # The person wonders if the site will retain the information. They see
-            # the site has generated a unique url for them -- there is some explanatory
-            # text for the effect.
-            self.fail('Finish the test')
-
-            # They visit the url and the to-do list is still there
+            # Now a new user, Fancis, comes along to the site
 
 
-            # Satisfied, they go back to sleep
-            
+            # We use a new browser session to make sure that no information of Edith's
+            # is coming through from cookies etc
+            self.browser.quit()
+            self.browser = webdriver.Firefox()
+
+            # Francis visits the home page. There is no sign of Edith's list
+            self.browser.get(self.live_server_url)
+            page_text = self.browser.find_element_by_tag_name('body').text
+            self.assertNotIn('Buy peacock feathers', page_text)
+            self.assertNotIn('make a fly', page_text)
+
+            # Francis starts a new list by entering a new item
+            # He is less interesting than Edith..
+            inputbox = self.browser.find_element_by_id('id_new_item')
+            inputbox.send_keys('Buy milk')
+            inputbox.send_keys(Keys.ENTER)
+
+            # Francis gets his own unique URL
+            francis_list_url = self.browser.current_url
+            self.assertRegex(francis_list_url, '/lists/.+')
+            self.assertNotEqual(francis_list_url, edith_list_url)
+
+            # Again there is no trace of Edith's list
+            self.assertNotIn('Buy peacock feathers', page_text)
+            self.assertIn('Buy milk', page_text)
+
+            # Satisfied, they both go back to sleep
+
