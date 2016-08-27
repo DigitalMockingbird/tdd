@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 
 class NewVisitorTest(LiveServerTestCase):
     def setUp(self):
-        self.browser = webdriver.Chrome('/Users/crux/Downloads/chromedriver')
+        self.browser = webdriver.Chrome('/Users/crux/programming/tdd/chromedriver')
         self.browser.implicitly_wait(3)
 
     def tearDown(self):
@@ -57,7 +57,7 @@ class NewVisitorTest(LiveServerTestCase):
         # We use a new browser session to make sure that no information of Edith's
         # is coming through from cookies etc
         self.browser.quit()
-        self.browser = webdriver.Chrome('/Users/crux/Downloads/chromedriver')
+        self.browser = webdriver.Chrome('/Users/crux/programming/tdd/chromedriver')
 
         # Francis visits the home page. There is no sign of Edith's list
         self.browser.get(self.live_server_url)
