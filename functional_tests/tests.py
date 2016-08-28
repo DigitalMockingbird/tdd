@@ -2,6 +2,7 @@ from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
+
 class NewVisitorTest(LiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Chrome('/Users/crux/programming/tdd/chromedriver')
@@ -53,7 +54,6 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Now a new user, Fancis, comes along to the site
 
-
         # We use a new browser session to make sure that no information of Edith's
         # is coming through from cookies etc
         self.browser.quit()
@@ -82,7 +82,6 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn('Buy milk', page_text)
 
         # Satisfied, they both go back to sleep
-
 
     def test_layout_and_styling(self):
         # Edith goes to the home page
