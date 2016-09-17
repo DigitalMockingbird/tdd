@@ -21,6 +21,7 @@ def view_list(request, list_id):
             item.save()
             return redirect('/lists/{0}/'.format(list_.id, ))
         except ValidationError:
+            item.delete()
             error = "You can't have an empty list item"
 
     return render(request, 'list.html', {'list': list_, 'error': error})
@@ -28,7 +29,7 @@ def view_list(request, list_id):
 
 def new_list(request):
     list_ = List.objects.create()
-    item = Item.objects.create(
+    item = Item(
         text=request.POST['item_text'],
         list=list_
     )
