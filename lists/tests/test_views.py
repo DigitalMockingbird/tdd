@@ -6,7 +6,9 @@ from django.template.loader import render_to_string
 from unittest import skip
 from lists.views import home_page
 from lists.models import Item, List
-from lists.forms import ItemForm, EMPTY_LIST_ERROR
+from lists.forms import (ItemForm, ExistingListItemForm,
+                         EMPTY_LIST_ERROR, DUPLICATE_ITEM_ERROR,
+                         )
 
 
 class HomePageTest(TestCase):
@@ -95,7 +97,6 @@ class ListViewTest(TestCase):
 
         self.assertRedirects(response, '/lists/{0}/'.format(correct_list.id, ))
 
-    @skip
     def test_duplicate_item_validation_errors_end_up_on_lists_page(self):
         list1 = List.objects.create()
         item1 = Item.objects.create(list=list1, text='textey')
@@ -103,13 +104,26 @@ class ListViewTest(TestCase):
             '/lists/{0}/'.format(list1.id),
             data={'text': 'textey'}
         )
-        expected_error = "You've already got this in your list"
+        expected_error = escape(DUPLICATE_ITEM_ERROR)
         self.assertContains(response, expected_error)
         self.assertTemplateUsed(response, 'list.html')
         self.assertEqual(Item.objects.all().count(), 1)
 
+    def test_displays_item_form(self):
+        list_ = List.objects.create()
+        response = self.client.get('/lists/{0}/'.format(list_.id))
+        self.assertIsInstance(response.context['form'], ExistingListItemForm)
+        self.assertContains(response, 'name="text"')
+
 
 class NewListTest(TestCase):
+    def post_invalid_input(self):
+        list_ = List.objects.create()
+        return self.client.post(
+            '/lists/{0}/'.format(list_.id, ),
+            data={'text': ''}
+        )
+
     def test_saving_a_POST_request(self):
         self.client.post(
             '/lists/new',
@@ -142,5 +156,5 @@ class NewListTest(TestCase):
         self.assertContains(response, escape(EMPTY_LIST_ERROR))
 
     def test_for_invalid_input_passes_form_to_template(self):
-        response = self.client.post('/lists/new', data={'text': ''})
-        self.assertIsInstance(response.context['form'], ItemForm)
+        response = self.post_invalid_input()
+        self.assertIsInstance(response.context['form'], ExistingListItemForm)
