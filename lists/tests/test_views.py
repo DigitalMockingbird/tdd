@@ -3,6 +3,7 @@ from django.http import HttpRequest
 from django.core.urlresolvers import resolve
 from django.utils.html import escape
 from django.template.loader import render_to_string
+from unittest import skip
 from lists.views import home_page
 from lists.models import Item, List
 from lists.forms import ItemForm, EMPTY_LIST_ERROR
@@ -93,6 +94,19 @@ class ListViewTest(TestCase):
         )
 
         self.assertRedirects(response, '/lists/{0}/'.format(correct_list.id, ))
+
+    @skip
+    def test_duplicate_item_validation_errors_end_up_on_lists_page(self):
+        list1 = List.objects.create()
+        item1 = Item.objects.create(list=list1, text='textey')
+        response = self.client.post(
+            '/lists/{0}/'.format(list1.id),
+            data={'text': 'textey'}
+        )
+        expected_error = "You've already got this in your list"
+        self.assertContains(response, expected_error)
+        self.assertTemplateUsed(response, 'list.html')
+        self.assertEqual(Item.objects.all().count(), 1)
 
 
 class NewListTest(TestCase):
