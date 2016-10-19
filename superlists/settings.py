@@ -124,6 +124,12 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'accounts', 'static'),
 )
 
+# Auth user models
+AUTH_USER_MODEL = 'accounts.User'
+AUTHENTICATION_BACKENDS = (
+    'accounts.authentication.PersonaAuthenticationBackend'
+)
+
 # Logging
 LOGGING = {
     'version': 1,
