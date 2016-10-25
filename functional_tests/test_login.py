@@ -4,6 +4,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from .base import FunctionalTest
 
+TEST_EMAIL = 'edith@mockmyid.com'
+
 
 class LoginTest(FunctionalTest):
     def switch_to_new_window(self, text_in_title):
@@ -25,16 +27,6 @@ class LoginTest(FunctionalTest):
             )
         )
 
-    def wait_to_be_logged_in(self):
-        self.wait_for_element_with_id('id_logout')
-        navbar = self.browser.find_element_by_css_selector('.navbar')
-        self.assertIn('edith@mockmyid.com', navbar.text)
-
-    def wait_to_be_logged_out(self):
-        self.wait_for_element_with_id('id_login')
-        navbar = self.browser.find_element_by_css_selector('.navbar')
-        self.assertNotIn('edith@mockmyid.com', navbar.text)
-
     def test_login_with_persona(self):
         # Edith goes to the awesome superlists site
         # and notices a "sign in" link for the first time
@@ -46,24 +38,24 @@ class LoginTest(FunctionalTest):
 
         # Edith logs in with her email address
         ## Use mockmyid for test email
-        self.browser.find_element_by_id('authentication_email').send_keys('edith@mockmyid.com')
+        self.browser.find_element_by_id('authentication_email').send_keys(TEST_EMAIL)
         self.browser.find_element_by_tag_name('button').click()
 
         # The persona window closes
         self.switch_to_new_window('To-Do lists')
 
         # She can see that she is logged in
-        self.wait_to_be_logged_in()
+        self.wait_to_be_logged_in(email=TEST_EMAIL)
 
         # Refreshing the page, she sees it's a real session style
         # not just a one-off for that page
         self.browser.refresh()
-        self.wait_to_be_logged_in()
+        self.wait_to_be_logged_in(email=TEST_EMAIL)
 
         # Terrified of this new feature, she reflexively clicks "logout"
         self.browser.find_element_by_id('id_logout').click()
-        self.wait_to_be_logged_out()
+        self.wait_to_be_logged_out(email=TEST_EMAIL)
 
         # The logged out status persists after a refresh
         self.browser.refresh()
-        self.wait_to_be_logged_out()
+        self.wait_to_be_logged_out(email=TEST_EMAIL)
