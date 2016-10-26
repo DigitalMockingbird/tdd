@@ -24,7 +24,8 @@ SECRET_KEY = 'wo6atd3fnzk+t(&0^i03@u#*s8s&a9f4=0!ukahy2v_pc&20#x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+DOMAIN = 'localhost'
+ALLOWED_HOSTS = [DOMAIN]
 
 # INTERNAL_IPS = ('127.0.0.1', )
 
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'lists',
     'accounts',
+    'functional_tests',
 ]
 
 MIDDLEWARE = [
@@ -144,6 +146,12 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
+        },
+        'accounts': {
+            'handlers': ['console'],
+        },
+        'lists': {
+            'handlers': ['console']
         },
     },
     'root': {
