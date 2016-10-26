@@ -1,14 +1,10 @@
 from django.test import TestCase
-from django.http import HttpRequest
-from django.core.urlresolvers import resolve
 from django.utils.html import escape
-from django.template.loader import render_to_string
-from unittest import skip
-from lists.views import home_page
-from lists.models import Item, List
+
 from lists.forms import (ItemForm, ExistingListItemForm,
                          EMPTY_LIST_ERROR, DUPLICATE_ITEM_ERROR,
                          )
+from lists.models import Item, List
 
 
 class HomePageTest(TestCase):
@@ -158,3 +154,9 @@ class NewListTest(TestCase):
     def test_for_invalid_input_passes_form_to_template(self):
         response = self.post_invalid_input()
         self.assertIsInstance(response.context['form'], ExistingListItemForm)
+
+
+class MyListsTest(TestCase):
+    def test_my_lists_url_renders_my_lists_templates(self):
+        response = self.client.get('/lists/users/a@b.com/')
+        self.assertTemplateUsed(response, 'my_lists.html')
