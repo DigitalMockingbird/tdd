@@ -12,7 +12,7 @@ class Command(BaseCommand):
         user = User.objects.create(email=email)
         session = SessionStore()
         session[SESSION_KEY] = user.pk
-        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
+        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS
         session.save()
         return session.session_key
 

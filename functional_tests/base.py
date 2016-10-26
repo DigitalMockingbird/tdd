@@ -1,7 +1,9 @@
 import sys
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
+
 from .server_tools import reset_database
 
 
@@ -37,6 +39,14 @@ class FunctionalTest(StaticLiveServerTestCase):
         rows = table.find_elements_by_tag_name('tr')
 
         self.assertIn(row_text, [row.text for row in rows])
+
+    def wait_for_element_with_id(self, element_id):
+        WebDriverWait(self.browser, timeout=30).until(
+            lambda b: b.find_element_by_id(element_id),
+            'Could not find element with id {}. Page text was {}'.format(
+                element_id, self.browser.find_element_by_tag_name('body').text
+            )
+        )
 
     def get_item_input_box(self):
         return self.browser.find_element_by_id('id_text')

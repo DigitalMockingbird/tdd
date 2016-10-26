@@ -15,7 +15,8 @@ def new_list(request):
     form = ItemForm(data=request.POST)
     if form.is_valid():
         list_ = List()
-        list_.owner = request.user
+        if request.user.is_authenticated:
+            list_.owner = request.user
         list_.save()
         form.save(for_list=list_)
         return redirect(list_)
@@ -42,4 +43,8 @@ def add_item(request, list_id):
 
 def my_lists(request, email):
     owner = User.objects.get(email=email)
-    return render(request, 'my_lists.html', {'owner': owner})
+    lists = List.objects.filter(owner_id=email)
+    list = []
+    for item in lists:
+        list.append(item.item_set.first().text)
+    return render(request, 'my_lists.html', {'owner': owner, 'list': list})
