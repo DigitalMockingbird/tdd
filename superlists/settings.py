@@ -25,7 +25,7 @@ SECRET_KEY = 'wo6atd3fnzk+t(&0^i03@u#*s8s&a9f4=0!ukahy2v_pc&20#x'
 DEBUG = True
 
 DOMAIN = 'localhost'
-ALLOWED_HOSTS = [DOMAIN]
+ALLOWED_HOSTS = [DOMAIN, '127.0.0.1']
 
 INTERNAL_IPS = ('127.0.0.1', 'localhost')
 
@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'superlists.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, '../database/db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, './database/db.sqlite3'),
     }
 }
 
